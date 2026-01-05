@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Bootstrapper/">
+    <Project Path="Bootstrapper/EshopModulith.Api/EshopModulith.Api.csproj" Id="3d8e9fbe-c429-4840-bc36-442950db474a" />
+  </Folder>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Basket/">
+    <Project Path="Modules/Basket/EshopModulith.Basket/EshopModulith.Basket.csproj" Id="cd479a36-e78f-4c7c-8bb4-0bacdc05218b" />
+  </Folder>
+  <Folder Name="/Modules/Catalog/">
+    <Project Path="Modules/Catalog/EshopModulith.Catalog/EshopModulith.Catalog.csproj" Id="75c86887-e4d6-44ac-b71f-25b289c0ad09" />
+  </Folder>
+  <Folder Name="/Modules/Ordering/">
+    <Project Path="Modules/Ordering/EshopModulith.Ordering/EshopModulith.Ordering.csproj" Id="a1bd225a-875a-4ae1-ac13-51dd5c28352a" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="Shared/EshopModulith.Shared/EshopModulith.Shared.csproj" Id="c574b2ea-33ad-449d-9de5-11534c8d5253" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>
