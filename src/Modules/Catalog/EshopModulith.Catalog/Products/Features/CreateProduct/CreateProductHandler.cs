@@ -1,0 +1,45 @@
+﻿
+namespace EshopModulith.Catalog.Products.Features.CreateProduct
+{
+    public record CreateProductCommand(ProductDto Product)
+        : ICommand<CreateProductResult>;
+
+    public record CreateProductResult(Guid Id);
+
+    public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+    {
+        public CreateProductCommandValidator()
+        {
+            RuleFor(x => x.Product.Name).NotEmpty().WithMessage("Name Is Required");
+            RuleFor(x => x.Product.Category).NotEmpty().WithMessage("Category Is Required");
+            RuleFor(x => x.Product.ImageFile).NotEmpty().WithMessage("Image File Is Required");
+            RuleFor(x => x.Product.Price).GreaterThan(0).WithMessage("Price Must Be Greater Than 0");
+        }
+    }
+    internal class CreateProductCommandHandler(CatalogDbContext dbContext) : ICommandHandler<CreateProductCommand, CreateProductResult>
+    {
+        public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
+        {
+            var product = CreateNewProduct(command.Product);
+
+            dbContext.Products.Add(product);
+            
+            await dbContext.SaveChangesAsync(cancellationToken);
+            
+            return new CreateProductResult(product.Id);
+        }
+
+        private Product CreateNewProduct(ProductDto product)
+        {
+            var newProduct = Product.Create(
+                Guid.NewGuid(),
+                product.Name,
+                product.Category, 
+                product.Description,
+                product.ImageFile,
+                product.Price);
+
+            return newProduct;
+        }
+    }
+}
