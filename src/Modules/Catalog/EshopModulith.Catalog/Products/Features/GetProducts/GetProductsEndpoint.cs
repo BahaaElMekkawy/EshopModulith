@@ -1,15 +1,18 @@
 ﻿
+using EshopModulith.Shared.Pagination;
+
 namespace EshopModulith.Catalog.Products.Features.GetProducts
 {
-    //public record GetProductsRequest(); No reauest object needed as there are no parameters
-    public record GetProductsResponse(IEnumerable<ProductDto> Products);
+    public record GetProductsRequest(PaginationRequest PaginationRequest);
+
+    public record GetProductsResponse(PaginatedResult<ProductDto> Products);
     public class GetProductsEndpoint() : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/products", async (ISender sender) =>
+            app.MapGet("/products", async ([AsParameters] PaginationRequest request, ISender sender) =>
             {
-                var query = new GetProductsQuery();
+                var query = new GetProductsQuery(request);
                 var result = await sender.Send(query);
                 var response = result.Adapt<GetProductsResponse>();
 

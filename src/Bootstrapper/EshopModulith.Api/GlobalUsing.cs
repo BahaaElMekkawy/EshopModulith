@@ -4,4 +4,8 @@ global using EshopModulith.Ordering;
 
 global using Carter;
 global using EshopModulith.Shared.Extensions;
+global using EshopModulith.Shared.Exceptions.Handler;
+global using Serilog;
+
+
 

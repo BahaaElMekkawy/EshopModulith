@@ -12,7 +12,7 @@ namespace EshopModulith.Catalog.Products.Features.GetProductById
                 .FirstOrDefaultAsync(p => p.Id == query.ProductId, cancellationToken);
 
             if (product == null)
-                throw new Exception($"Product with ID {query.ProductId} not found.");
+                throw new ProductNotFoundException(query.ProductId);
 
             var productDto = product.Adapt<ProductDto>();
 

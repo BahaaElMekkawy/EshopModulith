@@ -16,16 +16,16 @@ namespace EshopModulith.Catalog.Products.Features.CreateProduct
             RuleFor(x => x.Product.Price).GreaterThan(0).WithMessage("Price Must Be Greater Than 0");
         }
     }
-    internal class CreateProductCommandHandler(CatalogDbContext dbContext) : ICommandHandler<CreateProductCommand, CreateProductResult>
+    internal class CreateProductHandler(CatalogDbContext dbContext) : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
             var product = CreateNewProduct(command.Product);
 
             dbContext.Products.Add(product);
-            
+
             await dbContext.SaveChangesAsync(cancellationToken);
-            
+
             return new CreateProductResult(product.Id);
         }
 
@@ -34,7 +34,7 @@ namespace EshopModulith.Catalog.Products.Features.CreateProduct
             var newProduct = Product.Create(
                 Guid.NewGuid(),
                 product.Name,
-                product.Category, 
+                product.Category,
                 product.Description,
                 product.ImageFile,
                 product.Price);

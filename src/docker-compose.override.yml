@@ -11,5 +11,17 @@ services:
     volumes:
       - postgres_eshopdb:/var/lib/postgresql/
 
+  seq:
+    container_name: seq
+    environment:
+      ACCEPT_EULA: "Y" 
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+    restart: always
+    ports:
+        - "5341:5341"
+        - "9091:80" 
+ 
+
+
 
 
