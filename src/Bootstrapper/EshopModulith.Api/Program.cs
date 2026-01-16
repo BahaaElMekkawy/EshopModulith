@@ -4,9 +4,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, config) =>
     config.ReadFrom.Configuration(context.Configuration)
 );
+
 //Add services to the container.
 
-builder.Services.AddCarterModulesFromAssemblies(typeof(CatalogModule).Assembly);
+
+//Common services for all modules (Carter,Mediater,FluentValidation)
+var catalogAssembly = typeof(CatalogModule).Assembly;
+var basketAssembly = typeof(BasketModule).Assembly;
+
+// Register Carter modules from multiple assemblies
+builder.Services.AddCarterModulesFromAssemblies(catalogAssembly, basketAssembly);
+// Register MediatR handlers and behaviors from multiple assemblies
+builder.Services.AddMediatRWithAssemblies(catalogAssembly, basketAssembly);
+// Register FluentValidation validators from multiple assemblies
+builder.Services.AddValidatorsFromAssemblies([catalogAssembly, basketAssembly]); //Can Be to AddMediatRWith.. 
 
 builder.Services
     .AddBasketModule(builder.Configuration)
@@ -23,8 +34,8 @@ app.MapCarter();
 app.UseExceptionHandler(options => { }); // the empty options to use our custom exception handler
 app.UseSerilogRequestLogging();
 
-app.UseBasketModule()
-   .UseCatalogModule()
+app.UseCatalogModule()
+   .UseBasketModule()
    .UseOrderingModule();
 
 
