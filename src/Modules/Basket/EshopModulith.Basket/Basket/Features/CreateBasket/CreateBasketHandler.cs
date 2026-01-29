@@ -12,15 +12,13 @@ namespace EshopModulith.Basket.Basket.Features.CreateBasket
             RuleFor(x => x.ShoppingCart.UserName).NotEmpty().WithMessage("UserName Is Required");
         }
     }
-    public class CreateBasketHandler(BasketDbContext dbContext) : ICommandHandler<CreateBasketCommand, CreateBasketResult>
+    public class CreateBasketHandler(IBasketRepository repository) : ICommandHandler<CreateBasketCommand, CreateBasketResult>
     {
         public async Task<CreateBasketResult> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
         {
             var shoppingCart = CreateNewBasket(command.ShoppingCart);
 
-            dbContext.ShoppingCarts.Add(shoppingCart);
-
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await repository.CreateBasket(shoppingCart, cancellationToken);
 
             return new CreateBasketResult(shoppingCart.Id);
         }

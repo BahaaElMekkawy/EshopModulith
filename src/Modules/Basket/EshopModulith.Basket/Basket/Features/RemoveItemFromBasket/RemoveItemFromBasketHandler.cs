@@ -11,20 +11,15 @@ namespace EshopModulith.Basket.Basket.Features.RemoveItemFromBasket
             RuleFor(x => x.ProductId).NotEmpty().WithMessage("ProductId Is Required");
         }
     }
-    internal class RemoveItemFromBasketHandler(BasketDbContext dbContext) : ICommandHandler<RemoveItemFromBasketCommand, RemoveItemFromBasketResult>
+    internal class RemoveItemFromBasketHandler(IBasketRepository repository) : ICommandHandler<RemoveItemFromBasketCommand, RemoveItemFromBasketResult>
     {
         public async Task<RemoveItemFromBasketResult> Handle(RemoveItemFromBasketCommand command, CancellationToken cancellationToken)
         {
-            var basket = await dbContext.ShoppingCarts
-                .Include(b => b.Items)
-                .SingleOrDefaultAsync(b => b.UserName == command.UserName, cancellationToken);
-
-            if (basket is null)
-                throw new BasketNotFoundException(command.UserName);
+            var basket = await repository.GetBasket(command.UserName, false, cancellationToken);
 
             basket.RemoveItem(command.ProductId);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await repository.SaveChangesAsync(command.UserName , cancellationToken);
 
             return new RemoveItemFromBasketResult(basket.Id);
         }

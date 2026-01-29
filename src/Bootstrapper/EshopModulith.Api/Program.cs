@@ -19,6 +19,11 @@ builder.Services.AddMediatRWithAssemblies(catalogAssembly, basketAssembly);
 // Register FluentValidation validators from multiple assemblies
 builder.Services.AddValidatorsFromAssemblies([catalogAssembly, basketAssembly]); //Can Be to AddMediatRWith.. 
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
+
 builder.Services
     .AddBasketModule(builder.Configuration)
     .AddCatalogModule(builder.Configuration)

@@ -13,20 +13,18 @@ namespace EshopModulith.Basket.Basket.Features.AddItemIntoBasket
             RuleFor(x => x.Item.Quantity).GreaterThan(0).WithMessage("Quantity Must Be Greater Than 0");
         }
     }
-    internal class AddItemIntoBasketHandler(BasketDbContext dbContext) : ICommandHandler<AddItemIntoBasketCommand, AddItemIntoBasketResult>
+    internal class AddItemIntoBasketHandler(IBasketRepository repository) : ICommandHandler<AddItemIntoBasketCommand, AddItemIntoBasketResult>
     {
         public async Task<AddItemIntoBasketResult> Handle(AddItemIntoBasketCommand command, CancellationToken cancellationToken)
         {
-            var basket = await dbContext.ShoppingCarts
-                .Include(b => b.Items)
-                .FirstOrDefaultAsync(b => b.UserName == command.UserName, cancellationToken);
+            var basket = await repository.GetBasket(command.UserName, false, cancellationToken);
 
-            if (basket == null)
-                throw new BasketNotFoundException(command.UserName);
-            basket.AddItem(command.Item.ProductId, command.Item.Quantity, command.Item.Color, command.Item.Price, command.Item.ProductName);
+            basket.AddItem(command.Item.ProductId, command.Item.Quantity,
+                command.Item.Color, command.Item.Price, command.Item.ProductName);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
-            return new AddItemIntoBasketResult(basket.Id);  
+            await repository.SaveChangesAsync(command.UserName,cancellationToken);
+
+            return new AddItemIntoBasketResult(basket.Id);
         }
     }
 }
