@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\EshopModulith.Shared\EshopModulith.Shared.csproj" />
-    <ProjectReference Include="..\EshopModulith.Catalog.Contracts\EshopModulith.Catalog.Contracts.csproj" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
   </ItemGroup>
 
 </Project>

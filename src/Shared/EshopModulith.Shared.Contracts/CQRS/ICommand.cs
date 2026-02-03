@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace EshopModulith.Shared.CQRS
+namespace EshopModulith.Shared.Contracts.CQRS
 {
     public interface ICommand : IRequest<Unit>
     {

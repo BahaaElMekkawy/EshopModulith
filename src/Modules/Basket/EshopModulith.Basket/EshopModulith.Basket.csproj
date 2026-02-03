@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\EshopModulith.Shared\EshopModulith.Shared.csproj" />
+    <ProjectReference Include="..\..\Catalog\EshopModulith.Catalog.Contracts\EshopModulith.Catalog.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

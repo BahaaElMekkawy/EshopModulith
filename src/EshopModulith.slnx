@@ -7,12 +7,14 @@
     <Project Path="Modules/Basket/EshopModulith.Basket/EshopModulith.Basket.csproj" Id="cd479a36-e78f-4c7c-8bb4-0bacdc05218b" />
   </Folder>
   <Folder Name="/Modules/Catalog/">
+    <Project Path="Modules/Catalog/EshopModulith.Catalog.Contracts/EshopModulith.Catalog.Contracts.csproj" Id="a88ef707-8c28-4c22-9fde-248087505d93" />
     <Project Path="Modules/Catalog/EshopModulith.Catalog/EshopModulith.Catalog.csproj" Id="75c86887-e4d6-44ac-b71f-25b289c0ad09" />
   </Folder>
   <Folder Name="/Modules/Ordering/">
     <Project Path="Modules/Ordering/EshopModulith.Ordering/EshopModulith.Ordering.csproj" Id="a1bd225a-875a-4ae1-ac13-51dd5c28352a" />
   </Folder>
   <Folder Name="/Shared/">
+    <Project Path="Shared/EshopModulith.Shared.Contracts/EshopModulith.Shared.Contracts.csproj" Id="11ec8c85-9ddb-4920-ab85-9793fa48566b" />
     <Project Path="Shared/EshopModulith.Shared/EshopModulith.Shared.csproj" Id="c574b2ea-33ad-449d-9de5-11534c8d5253" />
   </Folder>
   <Project Path="docker-compose.dcproj">

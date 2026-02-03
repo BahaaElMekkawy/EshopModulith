@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace EshopModulith.Shared.CQRS
+namespace EshopModulith.Shared.Contracts.CQRS
 {
     //unit is used to represent a void response
     public interface ICommandHandler<in TCommand> : IRequestHandler<TCommand, Unit>

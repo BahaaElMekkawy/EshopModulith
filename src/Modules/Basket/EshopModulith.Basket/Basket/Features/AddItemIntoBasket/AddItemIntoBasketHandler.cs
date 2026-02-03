@@ -1,4 +1,7 @@
 ﻿
+using EshopModulith.Catalog.Contracts.Products.Features.GetProductById;
+using EshopModulith.Shared.Contracts.CQRS;
+
 namespace EshopModulith.Basket.Basket.Features.AddItemIntoBasket
 {
 
@@ -13,14 +16,20 @@ namespace EshopModulith.Basket.Basket.Features.AddItemIntoBasket
             RuleFor(x => x.Item.Quantity).GreaterThan(0).WithMessage("Quantity Must Be Greater Than 0");
         }
     }
-    internal class AddItemIntoBasketHandler(IBasketRepository repository) : ICommandHandler<AddItemIntoBasketCommand, AddItemIntoBasketResult>
+    internal class AddItemIntoBasketHandler(IBasketRepository repository,ISender sender) : ICommandHandler<AddItemIntoBasketCommand, AddItemIntoBasketResult>
     {
         public async Task<AddItemIntoBasketResult> Handle(AddItemIntoBasketCommand command, CancellationToken cancellationToken)
         {
             var basket = await repository.GetBasket(command.UserName, false, cancellationToken);
 
-            basket.AddItem(command.Item.ProductId, command.Item.Quantity,
-                command.Item.Color, command.Item.Price, command.Item.ProductName);
+            var productDto = await sender.Send(new GetProductByIdQuery(command.Item.ProductId));
+
+            basket.AddItem(
+                command.Item.ProductId, 
+                command.Item.Quantity,
+                command.Item.Color,
+                productDto.Product.Price,
+                productDto.Product.Name);
 
             await repository.SaveChangesAsync(command.UserName,cancellationToken);
 

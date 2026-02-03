@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace EshopModulith.Shared.CQRS
+namespace EshopModulith.Shared.Contracts.CQRS
 {
     public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, TResponse>
         where TQuery : IQuery<TResponse>

@@ -1,4 +1,4 @@
-﻿using EshopModulith.Shared.CQRS;
+﻿using EshopModulith.Shared.Contracts.CQRS;
 using FluentValidation;
 using MediatR;
 

@@ -4,7 +4,7 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Reflection;
 global using EshopModulith.Basket.Data;
 global using EshopModulith.Basket.Basket.Dtos;
-global using EshopModulith.Shared.CQRS;
+global using EshopModulith.Shared.Contracts.CQRS;
 global using FluentValidation;
 global using EshopModulith.Basket.Basket.Exceptions;
 global using Mapster;
