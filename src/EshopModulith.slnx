@@ -15,6 +15,7 @@
   </Folder>
   <Folder Name="/Shared/">
     <Project Path="Shared/EshopModulith.Shared.Contracts/EshopModulith.Shared.Contracts.csproj" Id="11ec8c85-9ddb-4920-ab85-9793fa48566b" />
+    <Project Path="Shared/EshopModulith.Shared.Messaging/EshopModulith.Shared.Messaging.csproj" Id="6bf073c9-184a-400e-83d2-8ea4576c2b33" />
     <Project Path="Shared/EshopModulith.Shared/EshopModulith.Shared.csproj" Id="c574b2ea-33ad-449d-9de5-11534c8d5253" />
   </Folder>
   <Project Path="docker-compose.dcproj">

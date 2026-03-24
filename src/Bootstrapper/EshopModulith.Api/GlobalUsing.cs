@@ -7,6 +7,8 @@ global using EshopModulith.Shared.Exceptions.Handler;
 global using Serilog;
 global using EshopModulith.Shared.Behavior;
 global using FluentValidation;
+global using EshopModulith.Shared.Messaging.Extenstions;
+
 
 
 

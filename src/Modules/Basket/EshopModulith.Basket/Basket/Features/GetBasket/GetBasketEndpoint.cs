@@ -17,7 +17,8 @@ namespace EshopModulith.Basket.Basket.Features.GetBasket
               .ProducesProblem(StatusCodes.Status404NotFound)
               .ProducesProblem(StatusCodes.Status400BadRequest)
               .WithSummary("Get Basket")
-              .WithDescription("Get Basket by UserName");
+              .WithDescription("Get Basket by UserName")
+              .RequireAuthorization();
         }
 
     }

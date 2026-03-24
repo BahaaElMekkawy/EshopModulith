@@ -1,8 +1,8 @@
 ﻿
+using EshopModulith.Catalog.Contracts.Products.Features.GetProductById;
+
 namespace EshopModulith.Catalog.Products.Features.GetProductById
 {
-    public record GetProductByIdQuery(Guid ProductId) : IQuery<GetProductByIdResult>;
-    public record GetProductByIdResult(ProductDto Product);
     internal class GetProductByIdHandler(CatalogDbContext dbContext) : IQueryHandler<GetProductByIdQuery, GetProductByIdResult>
     {
         public async Task<GetProductByIdResult> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)

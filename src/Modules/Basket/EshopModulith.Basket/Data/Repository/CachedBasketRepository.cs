@@ -22,7 +22,7 @@ namespace EshopModulith.Basket.Data.Repository
         public async Task<ShoppingCart> GetBasket(string userName, bool asNoTracking = true, CancellationToken cancellationToken = default)
         {
             //if i need to get the for update or delete i will not use the cache
-            if (!asNoTracking)
+            if (asNoTracking)
                 return await repository.GetBasket(userName,false, cancellationToken);
 
             var chachedBasket = await cache.GetStringAsync(userName, cancellationToken);

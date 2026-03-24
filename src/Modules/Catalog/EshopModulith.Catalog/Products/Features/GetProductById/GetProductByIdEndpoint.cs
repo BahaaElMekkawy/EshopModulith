@@ -1,4 +1,6 @@
-﻿namespace EshopModulith.Catalog.Products.Features.GetProductById
+﻿using EshopModulith.Catalog.Contracts.Products.Features.GetProductById;
+
+namespace EshopModulith.Catalog.Products.Features.GetProductById
 {
     //public record GetProductByIdRequest(Guid Id); No request object needed as the id is passed as a route parameter
     public record GetProductByIdResponse(ProductDto Product);

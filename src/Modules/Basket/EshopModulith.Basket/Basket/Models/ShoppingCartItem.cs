@@ -25,7 +25,7 @@ namespace EshopModulith.Basket.Basket.Models
         }
 
         [JsonConstructor]
-        public ShoppingCartItem(Guid id , Guid shoppingCartId , Guid productId , int quantity , string color , decimal price , string productName)
+        public ShoppingCartItem(Guid id, Guid shoppingCartId, Guid productId, int quantity, string color, decimal price, string productName)
         {
             Id = id;
             ShoppingCartId = shoppingCartId;
@@ -36,6 +36,10 @@ namespace EshopModulith.Basket.Basket.Models
             ProductName = productName;
         }
 
-
+        public void UpdatePrice(decimal price)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(price);
+            Price = price;
+        }
     }
 }

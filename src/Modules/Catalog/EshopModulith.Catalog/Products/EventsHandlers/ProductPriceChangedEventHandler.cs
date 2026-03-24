@@ -1,12 +1,26 @@
-﻿namespace EshopModulith.Catalog.Products.EventsHandlers
+﻿using EshopModulith.Shared.Messaging.Events;
+using MassTransit;
+
+namespace EshopModulith.Catalog.Products.EventsHandlers
 {
-    public class ProductPriceChangedEventHandler(ILogger<ProductPriceChangedEventHandler> logger) : INotificationHandler<ProductPriceChangedEvent>
+    public class ProductPriceChangedEventHandler(IBus bus, ILogger<ProductPriceChangedEventHandler> logger) : INotificationHandler<ProductPriceChangedEvent>
     {
-        public Task Handle(ProductPriceChangedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(ProductPriceChangedEvent notification, CancellationToken cancellationToken)
         {
-            //publish to productPriceChanged integration event for other modules to consume
             logger.LogInformation("Domain Event Handled: {DomainEvent}", notification.GetType().Name);
-            return Task.CompletedTask;
+
+            //publish to productPriceChanged integration event for other modules to consume
+            var integrationEvent = new ProductPriceChangedIntegrationEvent
+            {
+                ProductId = notification.Product.Id,
+                Name = notification.Product.Name,
+                Category = notification.Product.Category,
+                Description = notification.Product.Description,
+                ImageFile = notification.Product.ImageFile,
+                Price = notification.Product.Price
+            };
+
+            await bus.Publish(integrationEvent, cancellationToken);
         }
 
     }

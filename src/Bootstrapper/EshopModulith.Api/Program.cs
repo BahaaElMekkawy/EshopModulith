@@ -1,4 +1,6 @@
 
+using Keycloak.AuthServices.Authentication;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, config) =>
@@ -24,6 +26,11 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
+builder.Services.AddMassTransitWithAssemblies(builder.Configuration,catalogAssembly, basketAssembly);
+
+builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
+
 builder.Services
     .AddBasketModule(builder.Configuration)
     .AddCatalogModule(builder.Configuration)
@@ -37,6 +44,8 @@ var app = builder.Build();
 
 app.MapCarter();
 app.UseExceptionHandler(options => { }); // the empty options to use our custom exception handler
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseSerilogRequestLogging();
 
 app.UseCatalogModule()
