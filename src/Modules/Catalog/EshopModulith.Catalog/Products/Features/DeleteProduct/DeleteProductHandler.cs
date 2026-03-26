@@ -25,7 +25,6 @@ namespace EshopModulith.Catalog.Products.Features.DeleteProduct
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return new DeleteProductResult(true);
-
         }
     }
 }

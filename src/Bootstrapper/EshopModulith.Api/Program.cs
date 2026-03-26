@@ -13,20 +13,21 @@ builder.Host.UseSerilog((context, config) =>
 //Common services for all modules (Carter,Mediater,FluentValidation)
 var catalogAssembly = typeof(CatalogModule).Assembly;
 var basketAssembly = typeof(BasketModule).Assembly;
+var orderingAssembly = typeof(OrderingModule).Assembly;
 
 // Register Carter modules from multiple assemblies
-builder.Services.AddCarterModulesFromAssemblies(catalogAssembly, basketAssembly);
+builder.Services.AddCarterModulesFromAssemblies(catalogAssembly, basketAssembly, orderingAssembly);
 // Register MediatR handlers and behaviors from multiple assemblies
-builder.Services.AddMediatRWithAssemblies(catalogAssembly, basketAssembly);
+builder.Services.AddMediatRWithAssemblies(catalogAssembly, basketAssembly, orderingAssembly);
 // Register FluentValidation validators from multiple assemblies
-builder.Services.AddValidatorsFromAssemblies([catalogAssembly, basketAssembly]); //Can Be to AddMediatRWith.. 
+builder.Services.AddValidatorsFromAssemblies([catalogAssembly, basketAssembly, orderingAssembly]); //Can Be to AddMediatRWith.. 
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
-builder.Services.AddMassTransitWithAssemblies(builder.Configuration,catalogAssembly, basketAssembly);
+builder.Services.AddMassTransitWithAssemblies(builder.Configuration, catalogAssembly, basketAssembly,orderingAssembly);
 
 builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();

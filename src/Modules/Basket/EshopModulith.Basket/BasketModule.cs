@@ -1,4 +1,5 @@
-﻿using EshopModulith.Shared.Data;
+﻿using EshopModulith.Basket.Data.Processors;
+using EshopModulith.Shared.Data;
 using EshopModulith.Shared.Data.Interceptors;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +43,8 @@ namespace EshopModulith.Basket
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
                 options.UseNpgsql(connectionString);
             });
+
+            services.AddHostedService<OutboxProcessor>();
 
             return services;
         }
