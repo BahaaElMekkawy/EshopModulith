@@ -1,85 +1,169 @@
-# EShop Modulith & Microservices 🛒
+# EShopModulith 🛒
 
-This project was built to deepen my expertise in modern software architecture and distributed systems.
-Throughout the development process, I implemented advanced architectural patterns to address real-world scalability and reliability challenges, evolving the system from a Modular Monolith into a Microservices-based ecosystem.
+EshopModulith is a .NET-based modular monolith designed to showcase how well-defined domain boundaries can be achieved within a single deployable system.
 
-## 🛠️ Tech Stack
+This project was created to strengthen my understanding of modern software architecture and distributed systems. During its development, I applied advanced architectural patterns to solve real-world challenges related to scalability, maintainability, and system reliability. Over time, the system evolved from a modular monolith into a microservices-oriented architecture, reflecting practical trade-offs between simplicity and distributed complexity.
 
-**Frameworks / Languages:** .NET 10, C# 14, ASP.NET Core Minimal APIs, Carter  
-**Databases / Caching:** PostgreSQL, Redis Distributed Cache  
-**Messaging / Integration:** RabbitMQ, MassTransit, Outbox Pattern  
-**Authentication / Identity:** Keycloak, OAuth2, OpenID Connect, JWT Bearer  
-**Logging / Monitoring:** Serilog, Seq, Health Checks  
-**Architecture / Patterns:** Modular Monolith, Vertical Slice Architecture (VSA), Domain-Driven Design (DDD), CQRS, Clean Architecture  
-**Containerization / DevOps:** Docker, Docker Compose  
+The system is organized around three business modules:
+- `Catalog`
+- `Basket`
+- `Ordering`
 
-## 🏗️ Architectural Patterns Implemented
+It combines in-process module communication with asynchronous integration events, and uses the outbox pattern to improve messaging reliability.
 
-**Modular Monoliths (Modulith)**  
-Designed for high cohesion with clear boundaries between business domains.
+## Table of Contents
 
-**Vertical Slice Architecture (VSA)**  
-Organized code by features rather than layers to minimize coupling and improve maintainability.
+- [Architecture at a Glance](#architecture-at-a-glance)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Module Responsibilities](#module-responsibilities)
+- [Communication and Messaging](#communication-and-messaging)
+- [Data and Persistence](#data-and-persistence)
+- [API Surface](#api-surface)
+- [Security and Identity](#security-and-identity)
+- [Cross-Cutting Concerns](#cross-cutting-concerns)
+- [Local Infrastructure](#local-infrastructure)
+- [Getting Started](#getting-started)
+- [Current Gaps and Next Improvements](#current-gaps-and-next-improvements)
 
-**Domain-Driven Design (DDD)**  
-Modeled complex business logic using Entities, Aggregates, and Value Objects.
+## Architecture at a Glance
 
-**CQRS**  
-Separated read and write concerns using the MediatR library.
+- **Architectural style:** Modular Monolith (Modulith)
+- **Internal organization:** Vertical Slice + CQRS
+- **Domain modeling:** DDD-inspired aggregates, value objects, and domain events
+- **Host composition:** Single API bootstrapper that wires all modules
+- **Consistency strategy:** Synchronous in-process contracts + asynchronous integration events
 
-**Outbox Pattern**  
-Ensured reliable messaging and eventual consistency across modules and services.
+The API host registers each module using explicit extension points (`AddXModule` / `UseXModule`), preserving a clear separation between domain areas while running as one process.
 
-## 📦 Module Breakdown
+## Technology Stack
 
-### 📘 Catalog Module
-- Built with ASP.NET Core Minimal APIs using .NET 8 and C# 12
-- Implemented Vertical Slice Architecture using feature folders and consolidated class files
-- Configured CQRS validation pipeline behaviors with MediatR and FluentValidation
-- Used Entity Framework Core (Code-First) with PostgreSQL
-- Integrated Carter for clean and expressive Minimal API endpoint definitions
-- Handled cross-cutting concerns:
-  - Serilog / Seq logging
-  - Global exception handling
-  - Health checks
+- **Runtime / language:** .NET 10, C#
+- **API:** ASP.NET Core Minimal APIs, Carter
+- **Application pipeline:** MediatR, FluentValidation
+- **Data access:** Entity Framework Core, PostgreSQL (Npgsql)
+- **Caching:** Redis distributed cache
+- **Messaging:** MassTransit on RabbitMQ
+- **Authentication:** Keycloak JWT Bearer integration
+- **Observability:** Serilog + Seq
+- **Containerization:** Docker, Docker Compose
 
-### 🛒 Basket Module
-- Integrated Redis as a distributed cache on top of PostgreSQL
-- Applied structural design patterns:
-  - Proxy
-  - Decorator
-  - Cache-aside
-- Developed asynchronous event publishing to RabbitMQ using MassTransit
-- Implemented the Outbox Pattern to guarantee reliable messaging during the BasketCheckout use case
+## Project Structure
 
-### 🔄 Module Communication
+```text
+src/
+  Bootstrapper/
+    EshopModulith.Api/                  # Main host and module composition
+  Modules/
+    Catalog/EshopModulith.Catalog/      # Catalog module
+    Basket/EshopModulith.Basket/        # Basket module
+    Ordering/EshopModulith.Ordering/    # Ordering module
+  Shared/
+    EshopModulith.Shared/               # Cross-cutting primitives and behaviors
+    EshopModulith.Shared.Contracts/     # In-process contracts between modules
+    EshopModulith.Shared.Messaging/     # Integration events and bus wiring
+  docker-compose.yml
+  docker-compose.override.yml
+```
+<img width="662" height="517" alt="Screenshot 2026-05-02 185723" src="https://github.com/user-attachments/assets/cbb930b6-681e-4cb5-aee9-cb3228f74ce8" />
 
-**Synchronous Communication**  
-In-process method calls via public APIs between Catalog and Basket modules
 
-**Asynchronous Communication**  
-Price updates orchestrated using RabbitMQ and MassTransit
+## Module Responsibilities
 
-### 🔐 Identity & Security
-- Orchestrated OAuth2 and OpenID Connect authentication flows using Keycloak
-- Configured Keycloak inside Docker Compose as a standalone backing service
-- Secured inter-module and external communications using JWT Bearer tokens
+### Catalog
+- Manages product read and write use cases.
+- Publishes integration events when product pricing changes.
+- Owns a dedicated persistence schema (`catalog`).
 
-### 📦 Ordering Module
-- Applied Clean Architecture principles alongside DDD and CQRS
-- Ensured data integrity and consistency using the Outbox Pattern for checkout workflows
+### Basket
+- Manages user baskets and basket item operations.
+- Uses cache-aside behavior through repository decoration (`CachedBasketRepository`).
+- Implements checkout outbox records for reliable event publishing.
+- Owns a dedicated persistence schema (`basket`).
 
-## 🚀 Road to Microservices
+### Ordering
+- Consumes basket checkout integration events.
+- Creates and persists order aggregates.
+- Owns a dedicated persistence schema (`ordering`).
 
-This project demonstrates a controlled migration strategy from modular monolith to microservices using the Strangler Fig Pattern.
+## Communication and Messaging
 
-This approach allows:
-- Incremental service extraction
-- Zero downtime evolution
-- Preservation of system availability while modernizing the architecture
+### Synchronous communication
+- Basket performs in-process product lookups through shared contracts and MediatR.
+- Example flow: Basket add-item -> send `GetProductByIdQuery` -> Catalog handler resolves product.
 
-## 🎯 Project Goals
-- Practice enterprise-grade backend architecture
-- Implement reliable messaging and distributed system patterns
-- Demonstrate real-world system evolution strategies
-- Serve as a strong portfolio project for backend and full-stack roles
+### Asynchronous communication
+- Implemented via MassTransit + RabbitMQ.
+- Key integration event flows:
+  - Product price changed -> Catalog publishes -> Basket consumes and updates basket item prices.
+  - Basket checkout -> Basket stores outbox record -> background processor publishes -> Ordering consumes and creates orders.
+
+### Outbox pattern
+Basket checkout reliability uses an outbox workflow:
+1. Write outbox record in the same transaction as business changes.
+2. Poll unpublished outbox records in a background processor.
+3. Publish to RabbitMQ.
+4. Mark message as processed.
+
+This prevents losing messages between database commits and broker publication.
+
+## Data and Persistence
+
+- One `DbContext` per module:
+  - `CatalogDbContext`
+  - `BasketDbContext`
+  - `OrderingDbContext`
+- Each module has its own migrations and schema.
+- Startup applies migrations using shared migration extensions.
+- Shared EF Core interceptors handle:
+  - audit fields
+  - domain event dispatch
+
+## API Surface
+
+Representative endpoint groups:
+- **Catalog:** `/products`, `/products/{id:guid}`, `/products/category/{category}`
+- **Basket:** `/basket`, `/basket/{userName}`, `/basket/{userName}/items`, `/basket/checkout`
+- **Ordering:** `/orders`, `/orders/{id}`
+
+Endpoints are implemented as feature-local Carter modules and typically dispatch requests through MediatR handlers.
+
+## Security and Identity
+
+- JWT authentication is integrated with Keycloak.
+- Authorization services are registered at host level.
+- Basket endpoints are explicitly protected with authorization requirements.
+
+## Cross-Cutting Concerns
+
+- **Logging:** Serilog request/application logging with Seq sink.
+- **Validation:** FluentValidation via MediatR pipeline behavior.
+- **Error handling:** centralized exception mapping to `ProblemDetails`.
+- **Caching:** Redis-backed repository decorator in Basket.
+- **Domain events:** dispatched through EF Core save interceptors.
+
+## Local Infrastructure
+
+Docker Compose provides development dependencies:
+- PostgreSQL
+- Redis
+- RabbitMQ (with management UI)
+- Keycloak
+- Seq
+
+Primary app configuration lives in:
+- `src/Bootstrapper/EshopModulith.Api/appsettings.json`
+- `src/Bootstrapper/EshopModulith.Api/appsettings.Development.json`
+
+## Getting Started
+
+1. Start infrastructure services with Docker Compose.
+2. Run the API host project (`EshopModulith.Api`).
+3. On startup, module migrations are applied and modules are wired.
+
+## Next Improvements
+
+- Add automated tests (unit, integration, and contract-level where needed).
+- Add CI workflows for build/test and quality checks.
+
+
